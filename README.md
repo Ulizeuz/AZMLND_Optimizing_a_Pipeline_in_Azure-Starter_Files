@@ -9,29 +9,30 @@ This model is then compared to an Azure AutoML run.
 This dataset contains data about phone calls from a bank marketing campaing with 21 features like age, job, marital status, etc. We create and optimize ML Pipeline in two different ways: first, we use hyperdrive to get the best run and secondly we use AutoML to find the best model
 
 ## Pipeline architecture Hyperdrive
-The Hyperdrive pipeline is the following:
 
-- Train script. It's has many functions, for example clean_data to use the information. 
-- Tabular Dataset. In the train script the data is storaged in a Tabular Dataset.
-- Scikit Learn Logistic Regression. The Tabular Dataset is evaluated to train this model.
-- Hyperdrive. This tool helps us to find the best hyperparameters for the logistic regression model
-- Optimized model. We save the hyper parameters optimized by Hyperdrive  
+### Train script
 
-The following are the parameters:
+The script train.py help us to preprocess the data:
 
---C: Inverse of regularization strength
---max_iter: Maximum number of iterations to converge
+- Load and storage the data into Tabular Dataset 
+- The function clean_data helps us to clean the data (for example: handle missing values) and load the data into Pandas Dataframe 
+- Additionally, split data into train and test datasets. We use 20% - 80% ratio for train and test respectively  
+- Finally, apply Scikit-Learn model to fit the training data and compute the accuracy. 
 
-We choose the RandomParameterSampling because we can choose the choices:
+### Hyperdrive
 
-- For the first parameter we use the default value (1.0) and two more (0.5 and 1.5)
+This tool helps us to find the best hyperparameters for the logistic regression model. We use the next configuration:
 
-- For the second we use also the default value (100) and (50 and 150)
+- Sampling. We use RandomParameterSampling in spite of grid sweep is exhaustive but consumes more time, whereas random sweep can get a good results without taking as much time, reducing computation cost.
 
-And we use the folliwing parameter for the early stopping policy:
+- Early stopping policy. We define with Bandit policy based on slack factor and evaluation interval. We use this policy to terminate runs if the primary metric is non within the slack factor contrast with best run.We choose a 0.1 slack factor, but if we want to have more aggresive savings it could be smaller. In the same way, we could opt to small evaluation_interval, but we decide to choose the value 2 to evaluate every 2 runs.  
 
-- evaluation_interval = 2. With this value every 2 excercises apply the policy
-- slack_factor = 0.1. To calculate the allowed distance from the best performing experiment run
+- Estimator. SKLearn creates an estimator for training in Scikit-learn experiments. The parameter used are C (Inverse of regularization strength and max_iter (Maximum number of iterations to converge)
+
+- Primary Metric Name and Primary Metric Goal. With this parameters we define what HyperDrive tries to maximize, in this case was the ACCURACY
+
+At the end we save the hyper parameters optimized by Hyperdrive: ['--C', '1', '--max_iter', '100']
+
 
 ## AutoML
 The AutoML pipeline is the following:
