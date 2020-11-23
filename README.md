@@ -37,15 +37,26 @@ At the end we save the hyper parameters optimized by Hyperdrive: ['--C', '1', '-
 ## AutoML
 The AutoML pipeline is the following:
 
-- Tabular Dataset. We create this dataset with the bank data
+- Tabular Dataset. We create this dataset with the bank data. 
+- Data preparation. In tis step we uses OneHotEncoder for preprocessing to encode categorical features as a one-hot numerical array.
 - AutoML. We can evaluate different models in this step
 - AutoML Model. Using AutoML we can find another optimized model 
 
-AutoML generated 27 iterations, the best model with 0.9184 of accuracy was VotingEnsemble 
+AutoML generated 27 iterations, the best model with 0.9184 of accuracy was VotingEnsemble with the following classifiers:
+
+-  min_samples_leaf=0.01
+-  min_samples_split=0.01
+-  min_weight_fraction_leaf=0.0
+-  n_estimators=25
+-  n_jobs=1
+-  oob_score=False
+-  random_state=None
+-  verbose=0
+-  warm_start=False
 
 ## Pipeline comparison
 
 Comparing the two models, AutoML has better performnace in accuracy (0.9184) and in architecture (seamless pipeline, less steps)
 
 ## Future work
-I'd like to clean up the project (remove innecesary comments, include outputs after each steps, delete the compute cluster) and find another options for hyperparameters to improve SciKit-learn pipeline
+I'd like to clean up the project (remove innecesary comments, include outputs after each steps) and find another options for hyperparameters to improve SciKit-learn pipeline
